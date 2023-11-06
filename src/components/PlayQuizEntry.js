@@ -8,9 +8,9 @@ const PlayQuizEntry = () => {
   const [seq, setSeq] = useState("");
   const quizsInitial = [];
   const [quizs, setQuizs] = useState(quizsInitial);
+  const [bool , setBool] = useState(false);
 
-  var [val, setVal] = useState("");
-
+  var [val, setVal] = useState(0); // Initialize val as 0
 
   const handleChange = (event) => {
     setMessage(event.target.value);
@@ -19,11 +19,12 @@ const PlayQuizEntry = () => {
   const context = useContext(quizContext);
   const { getQuizs } = context;
   let navigate = useNavigate();
+
   useEffect(() => {
     if (localStorage.getItem("token")) {
       getQuizs();
     } else {
-      alert("login first");
+      alert("Login first");
       navigate("/login");
     }
   }, []);
@@ -42,20 +43,39 @@ const PlayQuizEntry = () => {
     );
     const json = await response.json();
     console.log(json, "FETCH");
+
+    // Initialize val and keep track of the correct and wrong answers
+    let totalVal = 0;
+    const correctAnswers = [];
+    const wrongAnswers = [];
+
+    for (const quiz of json) {
+      if (quiz.selectedAnswer === quiz.correctAnswer) {
+        // Correct answer
+        totalVal += 3;
+        correctAnswers.push(quiz._id);
+      } else {
+        // Wrong answer
+        totalVal -= 1;
+        wrongAnswers.push(quiz._id);
+      }
+    }
+
     setSeq("1");
     setQuizs(json);
-    // localStorage.setItem("val", 0);
+    setVal(totalVal);
+
+    // Now you can do something with the correctAnswers and wrongAnswers arrays
+
     const disableBtn = () => {
       document.getElementById("btn2").disabled = true;
     };
     disableBtn();
   };
 
-  console.log(seq);
-
   const myFunction = () => {
-    console.log(sessionStorage.getItem("val"));
     setVal(sessionStorage.getItem("val"));
+    setBool(true);
     const disableBtn = () => {
       document.getElementById("btn").disabled = true;
     };
@@ -66,17 +86,14 @@ const PlayQuizEntry = () => {
     <div>
       <div>
         <input
-        placeholder="Enter the pass key"
+          placeholder="Enter the pass key"
           type="text"
           id="message"
           name="message"
           onChange={handleChange}
           value={message}
         />
-
-        <h4>To start your quiz pass a key: {message}</h4>
-        <div>right div</div>
-
+        <h4>To start your quiz, enter a key: {message}</h4>
         <button className="btn btn-primary" id="btn2" onClick={fetchallquiz}>
           Play
         </button>
@@ -95,11 +112,14 @@ const PlayQuizEntry = () => {
         GENERATE SCORE{" "}
       </button>
 
-      <div className={seq === "1" ? "d-flex" : "d-none"}>
+      { bool ? <div className={seq === "1" ? "d-flex" : "d-none"}>
         {" "}
         Your Score is : {val}{" "}
-      </div>
-
+      </div> : (<div  className={seq === "1" ? "d-flex" : "d-none"}>
+        {" "} Total Score is : {val}
+      </div>)
+      
+      }
     </div>
   );
 };
