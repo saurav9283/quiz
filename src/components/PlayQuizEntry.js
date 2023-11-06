@@ -2,13 +2,15 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Game from "./Game";
 import quizContext from "../context/quizs/quizContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; 
 
 const PlayQuizEntry = () => {
   const [message, setMessage] = useState("");
   const [seq, setSeq] = useState("");
   const quizsInitial = [];
   const [quizs, setQuizs] = useState(quizsInitial);
-  const [bool , setBool] = useState(false);
+  const [bool, setBool] = useState(false);
 
   var [val, setVal] = useState(0); // Initialize val as 0
 
@@ -65,7 +67,10 @@ const PlayQuizEntry = () => {
     setQuizs(json);
     setVal(totalVal);
 
-    // Now you can do something with the correctAnswers and wrongAnswers arrays
+    toast.success(`Total 10 question 3 marks each and wrong answer -1 ${totalVal} marks!`, {
+      position: "top-right",
+      autoClose: 6000,
+    });
 
     const disableBtn = () => {
       document.getElementById("btn2").disabled = true;
@@ -114,12 +119,13 @@ const PlayQuizEntry = () => {
 
       { bool ? <div className={seq === "1" ? "d-flex" : "d-none"}>
         {" "}
-        Your Score is : {val}{" "}
+        Your Marks is : {val}{" "}
       </div> : (<div  className={seq === "1" ? "d-flex" : "d-none"}>
-        {" "} Total Score is : {val}
+        {" "} Total Marks is : {val}
       </div>)
-      
       }
+
+      <ToastContainer />
     </div>
   );
 };
