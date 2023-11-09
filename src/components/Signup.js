@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 const Signup = (props) => {
   const [credential, setcredential] = useState({ name:"", email: "", password: "", confirmpassword:"" });
-  let Navigate = useNavigate();
+  const Navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     const {name, email, password} = credential
@@ -16,6 +16,7 @@ const Signup = (props) => {
       body: JSON.stringify({ name,email, password }),
     });
     console.log(credential);
+    Navigate("/login")
     const json = await response.json();
     
     if(json.success){
